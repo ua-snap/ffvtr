@@ -8,19 +8,19 @@
 #
 
 library(shiny)
+currentYear <- 2016
+currentStudentFte <- 19229
+fteYears <- c(2016, 2018:2020, 2025)
 
-# Define server logic required to draw a histogram
 shinyServer(function(input, output) {
-   
-  output$distPlot <- renderPlot({
-    
-    # generate bins based on input$bins from ui.R
-    x    <- faithful[, 2] 
-    bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    
-    # draw the histogram with the specified number of bins
-    hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    
-  })
-  
+
+  exponentialGrowth <- function(year, baseFte, percentage) {
+    decimalGrowth <- 1 + percentage / 100
+    yearOffset <- year - currentYear
+    return(baseFte * decimalGrowth ^ yearOffset)
+  }
+
+  studentFteGrowth <- reactive({ lapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+
+  output$studentFtes <- renderPrint({ studentFteGrowth() })
 })

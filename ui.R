@@ -29,7 +29,7 @@ shinyUI(fluidPage(
     ),
     
     mainPanel(
-      "placeholder for spreadsheet and graphs"
+      textOutput("studentFtes")
     )
   )
 ))
