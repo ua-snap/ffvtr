@@ -26,6 +26,6 @@ shinyServer(function(input, output) {
   # This graph is just an example using real data calculated reactively based on inputs.
   # We will not be graphing Student FTE vs. years in the final product.
   output$ftePlot <- renderPlot({
-    ggplot(df(), aes(years, fte)) + geom_col()
+    ggplot(df(), aes(years, fte)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
   })
 })
