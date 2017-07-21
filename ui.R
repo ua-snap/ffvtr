@@ -19,9 +19,12 @@ shinyUI(fluidPage(
   fluidPage(
     fluidRow(
       column(6,
-             make_inputs_row(slider.args1, 6),
+             h4("% change student FTEs per year"),
+             make_inputs_row(slider.args1, 6, labels="none"),
+             h4("Tuition and Fees per Student FTE ($)"),
              make_inputs_row(slider.args2),
-             make_inputs_row(slider.args3, labels='none')
+             h4("Total State Appropriation (Million $)"),
+             make_inputs_row(slider.args3)
       ),
       column(6,
              "placeholder for spreadsheet and graphs"
