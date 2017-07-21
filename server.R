@@ -20,7 +20,27 @@ shinyServer(function(input, output) {
     return(baseFte * decimalGrowth ^ yearOffset)
   }
 
-  studentFteGrowth <- reactive({ lapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+  studentFteGrowth <- reactive({ sapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
 
+  tuitionFeesFTE <- reactive(
+    c(
+      6806, # 2016
+      input$tuitionFeesFTE2018,
+      input$tuitionFeesFTE2019,
+      input$tuitionFeesFTE2020,
+      input$tuitionFeesFTE2025
+      )
+    )
+  totalStateAppropriation <- reactive(
+    c(
+      350, # 2016
+      input$totalStateAppropriation2018,
+      input$totalStateAppropriation2019,
+      input$totalStateAppropriation2020,
+      input$totalStateAppropriation2025
+    )
+  )
   output$studentFtes <- renderPrint({ studentFteGrowth() })
+  output$tuitionFeesFte <- renderPrint({ tuitionFeesFTE() })
+  output$totalStateAppropriation <- renderPrint({ totalStateAppropriation() })
 })
