@@ -27,7 +27,9 @@ shinyUI(fluidPage(
              make_inputs_row(slider.args3)
       ),
       column(6,
-             "placeholder for spreadsheet and graphs"
+        textOutput("studentFtes"),
+        textOutput("tuitionFeesFte"),
+        textOutput("totalStateAppropriation")
       )
     )
   )
