@@ -20,12 +20,12 @@ shinyServer(function(input, output) {
     return(baseFte * decimalGrowth ^ yearOffset)
   }
 
-  studentFteGrowth <- reactive({ lapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+  studentFteGrowth <- reactive({ sapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+  df <- reactive({ data.frame(years=fteYears, fte=studentFteGrowth()) })
 
-  # An example of a ggplot2 bar graph that is successfully rendered on the UI.
-  # Taken from: http://ggplot2.tidyverse.org/reference/geom_bar.html
-  # Our real data, above, needs to be adapted to fit into this.
+  # This graph is just an example using real data calculated reactively based on inputs.
+  # We will not be graphing Student FTE vs. years in the final product.
   output$ftePlot <- renderPlot({
-    ggplot(mpg, aes(class)) + geom_bar()
+    ggplot(df(), aes(years, fte)) + geom_col()
   })
 })
