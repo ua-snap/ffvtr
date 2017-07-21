@@ -29,7 +29,9 @@ shinyUI(fluidPage(
     ),
     
     mainPanel(
-      textOutput("studentFtes")
+      textOutput("studentFtes"),
+      textOutput("tuitionFeesFte"),
+      textOutput("totalStateAppropriation")
     )
   )
 ))
