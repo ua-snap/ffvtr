@@ -29,7 +29,7 @@ shinyUI(fluidPage(
     ),
     
     mainPanel(
-      textOutput("studentFtes")
+      plotOutput("ftePlot")
     )
   )
 ))

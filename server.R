@@ -8,12 +8,12 @@
 #
 
 library(shiny)
+
 currentYear <- 2016
 currentStudentFte <- 19229
 fteYears <- c(2016, 2018:2020, 2025)
 
 shinyServer(function(input, output) {
-
   exponentialGrowth <- function(year, baseFte, percentage) {
     decimalGrowth <- 1 + percentage / 100
     yearOffset <- year - currentYear
@@ -22,5 +22,10 @@ shinyServer(function(input, output) {
 
   studentFteGrowth <- reactive({ lapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
 
-  output$studentFtes <- renderPrint({ studentFteGrowth() })
+  # An example of a ggplot2 bar graph that is successfully rendered on the UI.
+  # Taken from: http://ggplot2.tidyverse.org/reference/geom_bar.html
+  # Our real data, above, needs to be adapted to fit into this.
+  output$ftePlot <- renderPlot({
+    ggplot(mpg, aes(class)) + geom_bar()
+  })
 })
