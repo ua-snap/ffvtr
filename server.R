@@ -1,4 +1,5 @@
 library(shiny)
+library(purrr)
 
 currentYear <- 2016
 currentStudentFte <- 19229
@@ -6,7 +7,7 @@ fteYears <- c(2016, 2018:2025)
 
 shinyServer(function(input, output, session) {
 
-  lapply(1:9, function(i, x, suffix="slider"){
+  map(1:9, function(i, x, suffix="slider"){
     x <- x[[i]]
     num.lab <- x$inputId
     slider.lab <- paste0(x$inputId, suffix)
@@ -24,10 +25,10 @@ shinyServer(function(input, output, session) {
     return(round(baseFte * decimalGrowth ^ yearOffset))
   }
 
-  studentFteGrowth <- reactive({ sapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+  studentFteGrowth <- reactive({ map_dbl(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
 
   tuitionFeesFTE <- reactive(
-    sapply(
+    map_dbl(
       c(
         6806, # 2016
         input$tuitionFeesFTE2018,
@@ -45,7 +46,7 @@ shinyServer(function(input, output, session) {
   )
   
   totalStateAppropriation <- reactive(
-    sapply(
+    map_dbl(
       c(
         350, # 2016
         input$totalStateAppropriation2018,
