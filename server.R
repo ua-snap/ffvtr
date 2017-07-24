@@ -72,7 +72,7 @@ shinyServer(function(input, output, session) {
 
   # Build data frame for spreadsheet
   spreadsheetDf <- reactive({data.frame(
-    Year = fteYears,
+    year = fteYears,
     studentFte = studentFteGrowth(),
     tuitionFees = tuitionFeesFTE(),
     stateAppropriation = totalStateAppropriation(),
