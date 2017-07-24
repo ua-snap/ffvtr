@@ -31,6 +31,9 @@ shinyUI(fluidPage(
         textOutput("tuitionFeesFte"),
         textOutput("totalStateAppropriation")
       )
-    )
+    ),
+    br(),
+    br(),
+    actionButton("reset", label = "Reset Plots")
   )
 ))
