@@ -1,4 +1,5 @@
 library(shiny)
+library(ggplot2)
 
 currentYear <- 2016
 currentStudentFte <- 19229
