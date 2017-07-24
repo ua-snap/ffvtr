@@ -29,7 +29,8 @@ shinyUI(fluidPage(
       column(6,
         textOutput("studentFtes"),
         textOutput("tuitionFeesFte"),
-        textOutput("totalStateAppropriation")
+        textOutput("totalStateAppropriation"),
+        plotOutput("ftePlot")
       )
     )
   )
