@@ -19,16 +19,16 @@ shinyServer(function(input, output, session) {
     })
   }, x=c(slider.args1, slider.args2, slider.args3))
 
-  exponentialGrowth <- function(year, baseFte, percentage) {
+  exponentialGrowth <- function(years, baseFte, percentage) {
     decimalGrowth <- 1 + percentage / 100
-    yearOffset <- year - currentYear
-    return(round(baseFte * decimalGrowth ^ yearOffset))
+    yearOffsets <- years - currentYear
+    return(round(baseFte * decimalGrowth ^ yearOffsets))
   }
 
-  studentFteGrowth <- reactive({ sapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+  studentFteGrowth <- reactive({ exponentialGrowth(years=fteYears, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
 
   tuitionFeesFTE <- reactive(
-    sapply(
+    round(
       c(
         6806, # 2016
         input$tuitionFeesFTE2018,
@@ -40,13 +40,12 @@ shinyServer(function(input, output, session) {
           c(2021:2024)
         )$y,
         input$tuitionFeesFTE2025
-      ),
-      round
+      )
     )
   )
   
   totalStateAppropriation <- reactive(
-    sapply(
+    round(
       c(
         350, # 2016
         input$totalStateAppropriation2018,
@@ -58,8 +57,7 @@ shinyServer(function(input, output, session) {
           c(2021:2024)
         )$y,
         input$totalStateAppropriation2025
-      ),
-      round
+      )
     )
   )
   
