@@ -1,5 +1,8 @@
 library(shiny)
 library(ggplot2)
+library(dplyr)
+library(DT)
+library(reshape2)
 
 currentYear <- 2016
 currentStudentFte <- 19229
@@ -12,12 +15,12 @@ shinyServer(function(input, output, session) {
     num.lab <- x$inputId
     slider.lab <- paste0(x$inputId, suffix)
     observeEvent(input[[num.lab]], {
-      updateSliderInput(session, slider.lab, value=input[[num.lab]])
+      updateSliderInput(session, slider.lab, value = input[[num.lab]])
     })
     observeEvent(input[[slider.lab]], {
-      updateNumericInput(session, num.lab, value=input[[slider.lab]])
+      updateNumericInput(session, num.lab, value = input[[slider.lab]])
     })
-  }, x=c(slider.args1, slider.args2, slider.args3))
+  }, x = c(slider.args1, slider.args2, slider.args3))
 
   exponentialGrowth <- function(year, baseFte, percentage) {
     decimalGrowth <- 1 + percentage / 100
@@ -44,7 +47,7 @@ shinyServer(function(input, output, session) {
       round
     )
   )
-  
+
   totalStateAppropriation <- reactive(
     sapply(
       c(
@@ -62,16 +65,58 @@ shinyServer(function(input, output, session) {
       round
     )
   )
-  
-  output$studentFtes <- renderPrint({ studentFteGrowth() })
-  output$tuitionFeesFte <- renderPrint({ tuitionFeesFTE() })
-  output$totalStateAppropriation <- renderPrint({ totalStateAppropriation() })
-  
-  df <- reactive({ data.frame(years=fteYears, fte=studentFteGrowth()) })
 
-  # This graph is just an example using real data calculated reactively based on inputs.
-  # We will not be graphing Student FTE vs. years in the final product.
-  output$ftePlot <- renderPlot({
-    ggplot(df(), aes(years, fte)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
+  stateAppropriationPerFte <- reactive({ round(totalStateAppropriation() * 1000000 / studentFteGrowth()) })
+  totalTuitionFees <- reactive({ round(studentFteGrowth() * tuitionFeesFTE() / 1000000) })
+  revenue <- reactive({ totalTuitionFees() + totalStateAppropriation() })
+
+  # Build data frame for spreadsheet
+  spreadsheetDf <- reactive({data.frame(
+    year = fteYears,
+    studentFte = studentFteGrowth(),
+    tuitionFees = tuitionFeesFTE(),
+    stateAppropriation = totalStateAppropriation(),
+    stateAppropriationPerFte = stateAppropriationPerFte(),
+    totalTuitionFees = totalTuitionFees(),
+    revenue = revenue()
+  )})
+
+  output$spreadsheet <- DT::renderDataTable(
+    spreadsheetDf(),
+    options = list(
+      dom = 't',
+      ordering = FALSE,
+      columnDefs = list(
+        list(
+          targets = list(1, 4),
+          render = JS(
+            "function(data, type, row, meta) { return data.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ','); }"
+          )
+        )
+      )
+    ),
+    rownames = FALSE,
+    colnames = c(
+      "Year",
+      "Student FTE",
+      "Tuition & Fees per Student FTE ($)",
+      "Total State Appropriation (Million $)",
+      "State Appropriation per FTE ($)",
+      "Total Tuition & Fees (Million $)",
+      "Revenue, Educational Cost (Million $)"
+    )
+  )
+
+  compositeGraphDf <- reactive({ data.frame(years = fteYears, tuition = totalTuitionFees(), appropriation = totalStateAppropriation()) })
+  compositeGraphDat <- reactive({ melt(compositeGraphDf(), id = "years") })
+
+  output$compositePlot <- renderPlot({
+    ggplot(compositeGraphDat(), aes(years, value)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
+  })
+
+  appropriationsPlotDf <- reactive({ data.frame(years=fteYears, appropriation=stateAppropriationPerFte()) })
+
+  output$appropriationsPlot <- renderPlot({
+    ggplot(appropriationsPlotDf(), aes(years, appropriation)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
   })
 })
