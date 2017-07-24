@@ -1,5 +1,7 @@
 library(shiny)
 library(ggplot2)
+library(dplyr)
+library(DT)
 
 currentYear <- 2016
 currentStudentFte <- 19229
@@ -12,12 +14,12 @@ shinyServer(function(input, output, session) {
     num.lab <- x$inputId
     slider.lab <- paste0(x$inputId, suffix)
     observeEvent(input[[num.lab]], {
-      updateSliderInput(session, slider.lab, value=input[[num.lab]])
+      updateSliderInput(session, slider.lab, value = input[[num.lab]])
     })
     observeEvent(input[[slider.lab]], {
-      updateNumericInput(session, num.lab, value=input[[slider.lab]])
+      updateNumericInput(session, num.lab, value = input[[slider.lab]])
     })
-  }, x=c(slider.args1, slider.args2, slider.args3))
+  }, x = c(slider.args1, slider.args2, slider.args3))
 
   exponentialGrowth <- function(year, baseFte, percentage) {
     decimalGrowth <- 1 + percentage / 100
@@ -62,21 +64,48 @@ shinyServer(function(input, output, session) {
       round
     )
   )
-  
-  output$studentFtes <- renderPrint({studentFteGrowth()})
-  output$tuitionFeesFte <- renderPrint({tuitionFeesFTE()})
-  output$totalStateAppropriation <- renderPrint({totalStateAppropriation()})
-  
+
   # Build data frame for spreadsheet
-  spreadsheetDf <- reactive({ data.frame(
-    years = fteYears,
+  spreadsheetDf <- reactive({data.frame(
+    Year = fteYears,
     studentFte = studentFteGrowth(),
     tuitionFees = tuitionFeesFTE(),
     stateAppropriation = totalStateAppropriation()
-  )
+  )})
+  spreadsheet <- reactive({
+    tmp <- spreadsheetDf() %>%
+      mutate(
+        stateAppropriationPerFte = round(stateAppropriation * 1000000 / studentFte),
+        totalTuitionFees = round(studentFte * tuitionFees / 1000000),
+        revenue = totalTuitionFees + stateAppropriation
+      )
+    tmp
   })
-  spreadsheet <- reactive({spreadsheetDf()})
-  output$spreadsheet <- renderTable(spreadsheet())
+  output$spreadsheet <- DT::renderDataTable(
+    spreadsheet(),
+    options = list(
+      dom = 't',
+      ordering = FALSE,
+      columnDefs = list(
+        list(
+          targets = list(1, 4),
+          render = JS(
+            "function(data, type, row, meta) { return data.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ','); }"
+          )
+        )
+      )
+    ),
+    rownames = FALSE,
+    colnames = c(
+      "Year",
+      "Student FTE",
+      "Tuition & Fees per Student FTE ($)",
+      "Total State Appropriation (Million $)",
+      "State Appropriation per FTE ($)",
+      "Total Tuition & Fees (Million $)",
+      "Revenue, Educational Cost (Million $)"
+    )
+  )
   
   df <- reactive({data.frame(years = fteYears, fte = studentFteGrowth())})
 

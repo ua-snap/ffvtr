@@ -26,10 +26,7 @@ shinyUI(fluidPage(
              make_inputs_row(slider.args3)
       ),
       column(6,
-             tableOutput("spreadsheet"),
-             textOutput("studentFtes"),
-             textOutput("tuitionFeesFte"),
-             textOutput("totalStateAppropriation"),
+             DT::dataTableOutput("spreadsheet"),
              plotOutput("ftePlot")
       )
     )
