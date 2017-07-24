@@ -27,7 +27,8 @@ shinyUI(fluidPage(
       ),
       column(6,
              DT::dataTableOutput("spreadsheet"),
-             plotOutput("ftePlot")
+             plotOutput("compositePlot"),
+             plotOutput("appropriationsPlot")
       )
     )
   )
