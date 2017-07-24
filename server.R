@@ -68,13 +68,14 @@ shinyServer(function(input, output, session) {
   output$totalStateAppropriation <- renderPrint({totalStateAppropriation()})
   
   # Build data frame for spreadsheet
-  spreadsheetDf <- data.frame(
+  spreadsheetDf <- reactive({ data.frame(
     years = fteYears,
     studentFte = studentFteGrowth(),
     tuitionFees = tuitionFeesFTE(),
     stateAppropriation = totalStateAppropriation()
   )
-  spreadsheet <- reactive({spreadsheetDf})
+  })
+  spreadsheet <- reactive({spreadsheetDf()})
   output$spreadsheet <- renderTable(spreadsheet())
   
   df <- reactive({data.frame(years = fteYears, fte = studentFteGrowth())})
