@@ -63,11 +63,21 @@ shinyServer(function(input, output, session) {
     )
   )
   
-  output$studentFtes <- renderPrint({ studentFteGrowth() })
-  output$tuitionFeesFte <- renderPrint({ tuitionFeesFTE() })
-  output$totalStateAppropriation <- renderPrint({ totalStateAppropriation() })
+  output$studentFtes <- renderPrint({studentFteGrowth()})
+  output$tuitionFeesFte <- renderPrint({tuitionFeesFTE()})
+  output$totalStateAppropriation <- renderPrint({totalStateAppropriation()})
   
-  df <- reactive({ data.frame(years=fteYears, fte=studentFteGrowth()) })
+  # Build data frame for spreadsheet
+  spreadsheetDf <- data.frame(
+    years = fteYears,
+    studentFte = studentFteGrowth(),
+    tuitionFees = tuitionFeesFTE(),
+    stateAppropriation = totalStateAppropriation()
+  )
+  spreadsheet <- reactive({spreadsheetDf})
+  output$spreadsheet <- renderTable(spreadsheet())
+  
+  df <- reactive({data.frame(years = fteYears, fte = studentFteGrowth())})
 
   # This graph is just an example using real data calculated reactively based on inputs.
   # We will not be graphing Student FTE vs. years in the final product.
