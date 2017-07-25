@@ -23,7 +23,8 @@ shinyUI(fluidPage(
              h4("Tuition and Fees per Student FTE ($)"),
              make_inputs_row(slider.args2),
              h4("Total State Appropriation (Million $)"),
-             make_inputs_row(slider.args3)
+             make_inputs_row(slider.args3),
+             actionButton("reset", label = "Reset Plots")
       ),
       column(6,
              DT::dataTableOutput("spreadsheet"),

@@ -8,6 +8,12 @@ currentYear <- 2016
 currentStudentFte <- 19229
 fteYears <- c(2016, 2018:2025)
 
+exponentialGrowth <- function(year, baseFte, percentage) {
+  decimalGrowth <- 1 + percentage / 100
+  yearOffset <- year - currentYear
+  return(round(baseFte * decimalGrowth ^ yearOffset))
+}
+
 shinyServer(function(input, output, session) {
 
   lapply(1:9, function(i, x, suffix="slider"){
@@ -21,14 +27,8 @@ shinyServer(function(input, output, session) {
       updateNumericInput(session, num.lab, value = input[[slider.lab]])
     })
   }, x = c(slider.args1, slider.args2, slider.args3))
-
-  exponentialGrowth <- function(years, baseFte, percentage) {
-    decimalGrowth <- 1 + percentage / 100
-    yearOffsets <- years - currentYear
-    return(round(baseFte * decimalGrowth ^ yearOffsets))
-  }
-
-  studentFteGrowth <- reactive({ exponentialGrowth(years=fteYears, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+    
+  studentFteGrowth <- reactive({ sapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
 
   tuitionFeesFTE <- reactive(
     round(
@@ -64,9 +64,9 @@ shinyServer(function(input, output, session) {
     )
   )
 
-  stateAppropriationPerFte <- reactive({ round(totalStateAppropriation() * 1000000 / studentFteGrowth()) })
-  totalTuitionFees <- reactive({ round(studentFteGrowth() * tuitionFeesFTE() / 1000000) })
-  revenue <- reactive({ totalTuitionFees() + totalStateAppropriation() })
+  stateAppropriationPerFte <- reactive({round(totalStateAppropriation() * 1000000 / studentFteGrowth()) })
+  totalTuitionFees <- reactive({round(studentFteGrowth() * tuitionFeesFTE() / 1000000) })
+  revenue <- reactive({totalTuitionFees() + totalStateAppropriation() })
 
   # Build data frame for spreadsheet
   spreadsheetDf <- reactive({data.frame(
@@ -112,9 +112,17 @@ shinyServer(function(input, output, session) {
     ggplot(compositeGraphDat(), aes(years, value)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
   })
 
-  appropriationsPlotDf <- reactive({ data.frame(years=fteYears, appropriation=stateAppropriationPerFte()) })
+  appropriationsPlotDf <- reactive({data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
 
   output$appropriationsPlot <- renderPlot({
     ggplot(appropriationsPlotDf(), aes(years, appropriation)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
   })
+  
+  observeEvent(input$reset, { 
+    x <- c(slider.args1, slider.args2, slider.args3)
+    lapply(seq_along(x), function(i, x){
+      updateSliderInput(session, x[[i]]$inputId, value = x[[i]]$value)
+    }, x = x)
+  }) 
+  
 })
