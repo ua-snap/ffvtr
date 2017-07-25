@@ -13,24 +13,27 @@ make_inputs_row <- function(x, col=3, labels="top", suffix="slider"){
   )
 }
 
-shinyUI(fluidPage(
-  titlePanel("UA Financial Framework Visualization Tool"),
+function(request) {
   fluidPage(
-    fluidRow(
-      column(6,
-             h4("% change student FTEs per year"),
-             make_inputs_row(slider.args1, 6, labels = "none"),
-             h4("Tuition and Fees per Student FTE ($)"),
-             make_inputs_row(slider.args2),
-             h4("Total State Appropriation (Million $)"),
-             make_inputs_row(slider.args3),
-             actionButton("reset", label = "Reset Plots")
-      ),
-      column(6,
-             DT::dataTableOutput("spreadsheet"),
-             plotOutput("compositePlot"),
-             plotOutput("appropriationsPlot")
+    titlePanel("UA Financial Framework Visualization Tool"),
+    fluidPage(
+      fluidRow(
+        column(6,
+               h4("% change student FTEs per year"),
+               make_inputs_row(slider.args1, 6, labels = "none"),
+               h4("Tuition and Fees per Student FTE ($)"),
+               make_inputs_row(slider.args2),
+               h4("Total State Appropriation (Million $)"),
+               make_inputs_row(slider.args3),
+               actionButton("reset", label = "Reset Plots"),
+               bookmarkButton()
+        ),
+        column(6,
+               DT::dataTableOutput("spreadsheet"),
+               plotOutput("compositePlot"),
+               plotOutput("appropriationsPlot")
+        )
       )
     )
   )
-))
+}

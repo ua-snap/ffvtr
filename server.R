@@ -16,6 +16,13 @@ exponentialGrowth <- function(year, baseFte, percentage) {
 
 shinyServer(function(input, output, session) {
 
+  onRestore(function(state) {
+    x <- c(slider.args1, slider.args2, slider.args3)
+    lapply(seq_along(x), function(i, x){
+      updateSliderInput(session, x[[i]]$inputId, value = state$values$x[[i]]$inputId)
+    }, x = x)
+  })
+
   lapply(1:9, function(i, x, suffix="slider"){
     x <- x[[i]]
     num.lab <- x$inputId
@@ -123,6 +130,6 @@ shinyServer(function(input, output, session) {
     lapply(seq_along(x), function(i, x){
       updateSliderInput(session, x[[i]]$inputId, value = x[[i]]$value)
     }, x = x)
-  }) 
+  })
   
 })
