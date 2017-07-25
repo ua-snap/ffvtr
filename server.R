@@ -111,12 +111,12 @@ shinyServer(function(input, output, session) {
   compositeGraphDat <- reactive({ melt(compositeGraphDf(), id = "years") })
 
   output$compositePlot <- renderPlot({
-    ggplot(compositeGraphDat(), aes(years, value)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
+    ggplot(compositeGraphDat(), aes(years, value, fill = variable)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) + scale_fill_manual(values=c("#e3593d", "#4575b5"))
   })
 
   appropriationsPlotDf <- reactive({ data.frame(years=fteYears, appropriation=stateAppropriationPerFte()) })
 
   output$appropriationsPlot <- renderPlot({
-    ggplot(appropriationsPlotDf(), aes(years, appropriation)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
+    ggplot(appropriationsPlotDf(), aes(years, appropriation)) + geom_col(fill = "#13ad1b") + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
   })
 })
