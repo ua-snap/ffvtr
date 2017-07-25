@@ -107,24 +107,43 @@ shinyServer(function(input, output, session) {
     )
   )
 
+  # The enrollment variable is many times larger than the other data on the graph. To plot it on
+  # the same graph as the revenue bars without blowing the scale out of proportion, the enrollment
+  # value and tick positions on the right-side y-axis are divided by the (somewhat arbitrary)
+  # enrollmentScale variable. The labels, however, of the right-side y-axis tick marks use real
+  # enrollment values before division, so the end result displayed to the user is accurate.
+  enrollmentScale <- 50
+  enrollmentTickNum <- 5
+
   compositeGraphDf <- reactive({data.frame(
     years = fteYears,
-    enrollment = studentFteGrowth(),
+    enrollment = studentFteGrowth() / enrollmentScale,
     tuition = totalTuitionFees(),
     appropriation = totalStateAppropriation()
   )})
 
   compositeGraphDat <- reactive({ melt(compositeGraphDf(), id = "years") })
 
+  maxEnrollment <- reactive({ max(studentFteGrowth()) })
+
+  # Divide enrollment by the enrollmentScale variable defined above to bring the values down to
+  # the scale of the revenue bars on the graph.
+  secAxisTickPos <- reactive({ approx(c(0, maxEnrollment()) / enrollmentScale, n = enrollmentTickNum) })
+
+  # The labels for the right-side y-axis ticks are set to undivided enrollment values.
+  secAxisTickLabels <- reactive({ approx(c(0, maxEnrollment()), n = enrollmentTickNum) })
+
   output$compositePlot <- renderPlot({
     ggplot() +
       geom_col(mapping = aes(years, value, fill = variable), data = compositeGraphDat() %>% filter(variable == 'tuition' | variable == 'appropriation')) +
       geom_line(mapping = aes(years, value, fill = variable), data = compositeGraphDat() %>% filter(variable == 'enrollment')) +
+      geom_point(mapping = aes(years, value, fill = variable), data = compositeGraphDat() %>% filter(variable == 'enrollment')) +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
+      scale_y_continuous("Million $", sec.axis = sec_axis(~ ., name = "Enrollment", breaks = secAxisTickPos()$y, labels = secAxisTickLabels()$y)) +
       ggtitle("Enrollment, Tuition & Fees, State Appropriations") +
-      ylab("Million $") +
-      scale_fill_manual(name = element_blank(), values = c("#e3593d", "#4575b5", '#000000')) +
-      theme(axis.title.x = element_blank())
+      scale_fill_manual(name = element_blank(), values = c("#4575b5", "#000000", "#e3593d")) +
+      theme(axis.title.x = element_blank()) +
+      guides(fill = guide_legend(override.aes = list(shape = NA)))
   })
 
   appropriationsPlotDf <- reactive({ data.frame(years=fteYears, appropriation=stateAppropriationPerFte()) })
