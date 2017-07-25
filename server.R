@@ -107,16 +107,23 @@ shinyServer(function(input, output, session) {
     )
   )
 
-  compositeGraphDf <- reactive({ data.frame(years = fteYears, tuition = totalTuitionFees(), appropriation = totalStateAppropriation()) })
+  compositeGraphDf <- reactive({data.frame(
+    years = fteYears,
+    enrollment = studentFteGrowth(),
+    tuition = totalTuitionFees(),
+    appropriation = totalStateAppropriation()
+  )})
+
   compositeGraphDat <- reactive({ melt(compositeGraphDf(), id = "years") })
 
   output$compositePlot <- renderPlot({
-    ggplot(compositeGraphDat(), aes(years, value, fill = variable)) +
-      geom_col()+
+    ggplot() +
+      geom_col(mapping = aes(years, value, fill = variable), data = compositeGraphDat() %>% filter(variable == 'tuition' | variable == 'appropriation')) +
+      geom_line(mapping = aes(years, value, fill = variable), data = compositeGraphDat() %>% filter(variable == 'enrollment')) +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("Enrollment, Tuition & Fees, State Appropriations") +
       ylab("Million $") +
-      scale_fill_manual(name = element_blank(), values = c("#e3593d", "#4575b5")) +
+      scale_fill_manual(name = element_blank(), values = c("#e3593d", "#4575b5", '#000000')) +
       theme(axis.title.x = element_blank())
   })
 
