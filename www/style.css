@@ -29,6 +29,10 @@
   margin-bottom: 3em;
 }
 
+#spreadsheet .dataTable tbody td {
+  padding: 8px 18px;
+}
+
 .graph-row {
   clear: both;
 }
