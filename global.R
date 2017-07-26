@@ -3,7 +3,7 @@ library(shiny)
 enableBookmarking(store = "url")
 
 slider.args1 <- list( # arguments for first row of sliders/numeric inputs
-  list(inputId='studentFtePercentChange', label="% change student FTEs per year", value=2, min=-5, max=5, step=1)
+  list(inputId = 'studentFtePercentChange', label = "% change student FTEs per year", value = 2, min = -5, max = 5, step = 0.1)
 )
 
 slider.args2 <- list( # arguments for first row of sliders/numeric inputs
