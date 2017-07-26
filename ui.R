@@ -29,10 +29,13 @@ function(request) {
                bookmarkButton()
         ),
         column(6,
-               DT::dataTableOutput("spreadsheet"),
-               plotOutput("compositePlot"),
-               plotOutput("appropriationsPlot")
+               DT::dataTableOutput("spreadsheet")
         )
+      ),
+      fluidRow(
+        column(4, plotOutput("enrollmentPlot")),
+        column(4, plotOutput("compositePlot")),
+        column(4, plotOutput("appropriationsPlot"))
       )
     )
   )
