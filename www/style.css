@@ -1,9 +1,10 @@
 .navbar {
-  height: 65px;
+  min-height: 65px;
 }
 
 .navbar-header, .navbar-brand {
   width: 100%;
+  height: inherit;
 }
 
 .navbar > .container-fluid .navbar-brand {
@@ -14,13 +15,9 @@
   display: none;
 }
 
-.navbar-buttons {
-  float: right;
-}
-
 .navbar-content .navbar-title {
   font-size: 1.5em;
-  margin-top: 0.25em;
+  margin: 0.25em 0;
   display: inline-block;
 }
 

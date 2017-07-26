@@ -28,7 +28,7 @@ function(request) {
         page_title
       ),
       span(
-        class = "navbar-buttons",
+        class = "pull-right",
         actionButton("reset", label = "Reset Plots"),
         bookmarkButton()
       )
