@@ -112,17 +112,44 @@ shinyServer(function(input, output, session) {
     )
   )
 
+  enrollmentGraphDf <- reactive({ data.frame(years = fteYears, enrollment = studentFteGrowth()) })
+  enrollmentGraphDat <- reactive({ melt(enrollmentGraphDf(), id = "years") })
+
+  output$enrollmentPlot <- renderPlot({
+    ggplot(enrollmentGraphDat(), aes(years, value, fill = variable)) +
+      geom_line() +
+      geom_point() +
+      scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
+      ggtitle("Enrollment") +
+      ylab("Student FTEs") +
+      scale_fill_manual(name = element_blank(), values = c("#000000")) +
+      theme(axis.title.x = element_blank(), legend.position = "bottom")
+  })
+
   compositeGraphDf <- reactive({ data.frame(years = fteYears, tuition = totalTuitionFees(), appropriation = totalStateAppropriation()) })
   compositeGraphDat <- reactive({ melt(compositeGraphDf(), id = "years") })
 
   output$compositePlot <- renderPlot({
-    ggplot(compositeGraphDat(), aes(years, value)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
+    ggplot(compositeGraphDat(), aes(years, value, fill = variable)) +
+      geom_col()+
+      scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
+      ggtitle("Tuition & Fees, State Appropriations") +
+      ylab("Million $") +
+      scale_fill_manual(name = element_blank(), values = c("#e3593d", "#4575b5")) +
+      theme(axis.title.x = element_blank(), legend.position = "bottom")
   })
 
-  appropriationsPlotDf <- reactive({data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
+  appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
+  appropriationsPlotDat <- reactive({ melt(appropriationsPlotDf(), id = "years") })
 
   output$appropriationsPlot <- renderPlot({
-    ggplot(appropriationsPlotDf(), aes(years, appropriation)) + geom_col() + scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1))
+    ggplot(appropriationsPlotDat(), aes(years, value, fill = variable)) +
+      geom_col() +
+      scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
+      ggtitle("State Appropriations per FTE") +
+      ylab("Thousand $") +
+      scale_fill_manual(name = element_blank(), values = c("#13ad1b")) +
+      theme(axis.title.x = element_blank(), legend.position = "bottom")
   })
   
   observeEvent(input$reset, { 
