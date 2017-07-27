@@ -37,7 +37,7 @@ shinyServer(function(input, output, session) {
     
   studentFteGrowth <- reactive({ sapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
 
-  tuitionFeesFTE <- reactive(
+  tuitionFeesFTE <- debounce(reactive(
     round(
       c(
         6806, # 2016
@@ -52,9 +52,9 @@ shinyServer(function(input, output, session) {
         input$tuitionFeesFTE2025
       )
     )
-  )
+  ), 100, priority = 100)
 
-  totalStateAppropriation <- reactive(
+  totalStateAppropriation <- debounce(reactive(
     round(
       c(
         350, # 2016
@@ -69,14 +69,14 @@ shinyServer(function(input, output, session) {
         input$totalStateAppropriation2025
       )
     )
-  )
+  ), 100, priority = 100)
 
   stateAppropriationPerFte <- reactive({round(totalStateAppropriation() * 1000000 / studentFteGrowth()) })
   totalTuitionFees <- reactive({round(studentFteGrowth() * tuitionFeesFTE() / 1000000) })
   revenue <- reactive({totalTuitionFees() + totalStateAppropriation() })
 
   # Build data frame for spreadsheet
-  spreadsheetDf <- reactive({data.frame(
+  spreadsheetDf <- debounce(reactive({data.frame(
     year = fteYears,
     studentFte = studentFteGrowth(),
     tuitionFees = tuitionFeesFTE(),
@@ -84,7 +84,7 @@ shinyServer(function(input, output, session) {
     stateAppropriationPerFte = stateAppropriationPerFte(),
     totalTuitionFees = totalTuitionFees(),
     revenue = revenue()
-  )})
+  )}), 100, priority = 100)
 
   output$spreadsheet <- DT::renderDataTable(
     spreadsheetDf(),
@@ -113,7 +113,10 @@ shinyServer(function(input, output, session) {
   )
 
   enrollmentGraphDf <- reactive({ data.frame(years = fteYears, enrollment = studentFteGrowth()) })
-  enrollmentGraphDat <- reactive({ melt(enrollmentGraphDf(), id = "years") })
+  enrollmentGraphDat <- debounce(
+    reactive({ melt(enrollmentGraphDf(), id = "years") }),
+    100,
+    priority = 100)
 
   output$enrollmentPlot <- renderPlot({
     ggplot(enrollmentGraphDat(), aes(years, value, fill = variable)) +
@@ -134,7 +137,10 @@ shinyServer(function(input, output, session) {
   })
 
   compositeGraphDf <- reactive({ data.frame(years = fteYears, tuition = totalTuitionFees(), appropriation = totalStateAppropriation()) })
-  compositeGraphDat <- reactive({ melt(compositeGraphDf(), id = "years") })
+  compositeGraphDat <- debounce(
+    reactive({ melt(compositeGraphDf(), id = "years") }),
+    100,
+    priority = 100)
 
   output$compositePlot <- renderPlot({
     ggplot(compositeGraphDat(), aes(years, value, fill = variable)) +
@@ -155,7 +161,10 @@ shinyServer(function(input, output, session) {
   })
 
   appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
-  appropriationsPlotDat <- reactive({ melt(appropriationsPlotDf(), id = "years") })
+  appropriationsPlotDat <- debounce(
+    reactive({ melt(appropriationsPlotDf(), id = "years") }),
+    100,
+    priority = 100)
 
   output$appropriationsPlot <- renderPlot({
     ggplot(appropriationsPlotDat(), aes(years, value, fill = variable)) +
