@@ -123,7 +123,14 @@ shinyServer(function(input, output, session) {
       ggtitle("Enrollment") +
       ylab("Student FTEs") +
       scale_fill_manual(name = element_blank(), values = c("#000000")) +
-      theme(axis.title.x = element_blank(), legend.position = "bottom", text = element_text(size = 17))
+      theme(
+        text = element_text(size = 17),
+        axis.text = element_text(size = 15),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 20, margin = margin(0, 20, 0, 0)),
+        legend.position = "none",
+        plot.margin = unit(c(0.28, 0, 1.6, 0.5), "cm")
+      )
   })
 
   compositeGraphDf <- reactive({ data.frame(years = fteYears, tuition = totalTuitionFees(), appropriation = totalStateAppropriation()) })
@@ -135,8 +142,16 @@ shinyServer(function(input, output, session) {
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("Tuition & Fees, State Appropriations") +
       ylab("Million $") +
-      scale_fill_manual(name = element_blank(), values = c("#e3593d", "#4575b5")) +
-      theme(axis.title.x = element_blank(), legend.position = "bottom", text = element_text(size = 17))
+      scale_fill_manual(name = element_blank(), values = c("#e3593d", "#4575b5"), labels = c("Tuition   ", "Appropriation")) +
+      theme(
+        text = element_text(size = 17),
+        axis.text = element_text(size = 15),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 20, margin = margin(0, 20, 0, 0)),
+        legend.text = element_text(size = 17),
+        legend.position = "bottom",
+        plot.margin = unit(c(0.2, 0.5, 0.175, 0.5), "cm")
+      )
   })
 
   appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
@@ -149,7 +164,14 @@ shinyServer(function(input, output, session) {
       ggtitle("State Appropriations per FTE") +
       ylab("Thousand $") +
       scale_fill_manual(name = element_blank(), values = c("#13ad1b")) +
-      theme(axis.title.x = element_blank(), legend.position = "bottom", text = element_text(size = 17))
+      theme(
+        text = element_text(size = 17),
+        axis.text = element_text(size = 15),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size = 20, margin = margin(0, 20, 0, 0)),
+        legend.position = "none",
+        plot.margin = unit(c(0.175, 0.5, 1.6, 0), "cm")
+      )
   })
   
   observeEvent(input$reset, { 
