@@ -172,6 +172,7 @@ shinyServer(function(input, output, session) {
         legend.position = "none",
         plot.margin = unit(c(0.175, 0.5, 1.6, 0), "cm")
       )
+      theme(axis.title.x = element_blank(), legend.position = "bottom", text = element_text(size = 17))
   })
   
   observeEvent(input$reset, { 
