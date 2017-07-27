@@ -4,9 +4,9 @@ library(dplyr)
 library(DT)
 library(reshape2)
 
-currentYear <- 2016
+currentYear <- 2017
 currentStudentFte <- 19229
-fteYears <- c(2016, 2018:2025)
+fteYears <- c(2017:2025)
 
 exponentialGrowth <- function(year, baseFte, percentage) {
   decimalGrowth <- 1 + percentage / 100
