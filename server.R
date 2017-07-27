@@ -123,7 +123,7 @@ shinyServer(function(input, output, session) {
       ggtitle("Enrollment") +
       ylab("Student FTEs") +
       scale_fill_manual(name = element_blank(), values = c("#000000")) +
-      theme(axis.title.x = element_blank(), legend.position = "bottom")
+      theme(axis.title.x = element_blank(), legend.position = "bottom", text = element_text(size = 17))
   })
 
   compositeGraphDf <- reactive({ data.frame(years = fteYears, tuition = totalTuitionFees(), appropriation = totalStateAppropriation()) })
@@ -136,7 +136,7 @@ shinyServer(function(input, output, session) {
       ggtitle("Tuition & Fees, State Appropriations") +
       ylab("Million $") +
       scale_fill_manual(name = element_blank(), values = c("#e3593d", "#4575b5")) +
-      theme(axis.title.x = element_blank(), legend.position = "bottom")
+      theme(axis.title.x = element_blank(), legend.position = "bottom", text = element_text(size = 17))
   })
 
   appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
@@ -149,7 +149,7 @@ shinyServer(function(input, output, session) {
       ggtitle("State Appropriations per FTE") +
       ylab("Thousand $") +
       scale_fill_manual(name = element_blank(), values = c("#13ad1b")) +
-      theme(axis.title.x = element_blank(), legend.position = "bottom")
+      theme(axis.title.x = element_blank(), legend.position = "bottom", text = element_text(size = 17))
   })
   
   observeEvent(input$reset, { 
