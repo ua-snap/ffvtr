@@ -33,6 +33,7 @@ function(request) {
         bookmarkButton()
       )
     ),
+    useShinyjs(),
     fluidRow(
       column(6,
         h4("% change student FTEs per year"),
