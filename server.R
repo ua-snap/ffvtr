@@ -8,10 +8,10 @@ currentYear <- 2017
 currentStudentFte <- 19229
 fteYears <- c(2017:2025)
 
-exponentialGrowth <- function(year, baseFte, percentage) {
+exponentialGrowth <- function(years, baseFte, percentage) {
   decimalGrowth <- 1 + percentage / 100
-  yearOffset <- year - currentYear
-  return(round(baseFte * decimalGrowth ^ yearOffset))
+  yearOffsets <- years - currentYear
+  round(baseFte * decimalGrowth ^ yearOffsets)
 }
 
 shinyServer(function(input, output, session) {
@@ -37,7 +37,7 @@ shinyServer(function(input, output, session) {
     })
   }, x = c(slider.args1, slider.args2, slider.args3))
     
-  studentFteGrowth <- reactive({ sapply(fteYears, exponentialGrowth, baseFte=currentStudentFte, percentage=input$studentFtePercentChange) })
+  studentFteGrowth <- reactive({ exponentialGrowth(fteYears, currentStudentFte, input$studentFtePercentChange) })
 
   tuitionFeesFTE <- reactive(
     round(
