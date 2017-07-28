@@ -28,10 +28,12 @@ shinyServer(function(input, output, session) {
     num.lab <- x$inputId
     slider.lab <- paste0(x$inputId, suffix)
     observeEvent(input[[num.lab]], {
-      updateSliderInput(session, slider.lab, value = input[[num.lab]])
+      if(input[[num.lab]] != input[[slider.lab]])
+        onevent("mouseleave", num.lab, updateSliderInput(session, slider.lab, value = input[[num.lab]]))
     })
     observeEvent(input[[slider.lab]], {
-      updateNumericInput(session, num.lab, value = input[[slider.lab]])
+      if(input[[num.lab]] != input[[slider.lab]])
+        updateNumericInput(session, num.lab, value = input[[slider.lab]])
     })
   }, x = c(slider.args1, slider.args2, slider.args3))
     

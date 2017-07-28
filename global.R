@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 
 enableBookmarking(store = "url")
 
