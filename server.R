@@ -128,10 +128,11 @@ shinyServer(function(input, output, session) {
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
+        axis.text.x = element_text(angle = -45, hjust = 0),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 20, margin = margin(0, 20, 0, 0)),
         legend.position = "none",
-        plot.margin = unit(c(0.28, 0, 1.6, 0.5), "cm")
+        plot.margin = unit(c(0.28, 0.5, 1.6, 0.5), "cm")
       )
   })
 
@@ -148,11 +149,12 @@ shinyServer(function(input, output, session) {
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
+        axis.text.x = element_text(angle = -45, hjust = 0),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 20, margin = margin(0, 20, 0, 0)),
         legend.text = element_text(size = 17),
         legend.position = "bottom",
-        plot.margin = unit(c(0.2, 0.5, 0.175, 0.5), "cm")
+        plot.margin = unit(c(0.2, 0.5, 0.185, 0.5), "cm")
       )
   })
 
@@ -169,6 +171,7 @@ shinyServer(function(input, output, session) {
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
+        axis.text.x = element_text(angle = -45, hjust = 0),
         axis.title.x = element_blank(),
         axis.title.y = element_text(size = 20, margin = margin(0, 20, 0, 0)),
         legend.position = "none",
