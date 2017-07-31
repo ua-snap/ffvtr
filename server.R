@@ -156,7 +156,7 @@ shinyServer(function(input, output, session) {
       )
   })
 
-  appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
+  appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte() / 1000) })
   appropriationsPlotDat <- reactive({ melt(appropriationsPlotDf(), id = "years") })
 
   output$appropriationsPlot <- renderPlot({
