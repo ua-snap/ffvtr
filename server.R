@@ -119,12 +119,11 @@ shinyServer(function(input, output, session) {
 
   output$enrollmentPlot <- renderPlot({
     ggplot(enrollmentGraphDat(), aes(years, value, fill = variable)) +
-      geom_line() +
-      geom_point() +
+      geom_col() +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("Enrollment") +
       ylab("Student FTEs") +
-      scale_fill_manual(name = element_blank(), values = c("#000000")) +
+      scale_fill_manual(name = element_blank(), values = c("#e3593d")) +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
@@ -141,7 +140,7 @@ shinyServer(function(input, output, session) {
 
   output$compositePlot <- renderPlot({
     ggplot(compositeGraphDat(), aes(years, value, fill = variable)) +
-      geom_col()+
+      geom_col() +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("Tuition & Fees, State Appropriations") +
       ylab("Million $") +
@@ -167,7 +166,7 @@ shinyServer(function(input, output, session) {
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("State Appropriations per FTE") +
       ylab("Thousand $") +
-      scale_fill_manual(name = element_blank(), values = c("#13ad1b")) +
+      scale_fill_manual(name = element_blank(), values = c("#4575b5")) +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
