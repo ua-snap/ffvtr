@@ -123,7 +123,7 @@ shinyServer(function(input, output, session) {
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("Enrollment") +
       ylab("Student FTEs") +
-      scale_fill_manual(name = element_blank(), values = c("#e3593d")) +
+      scale_fill_manual(name = element_blank(), values = c("#666666")) +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
@@ -166,7 +166,7 @@ shinyServer(function(input, output, session) {
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("State Appropriations per FTE") +
       ylab("Thousand $") +
-      scale_fill_manual(name = element_blank(), values = c("#4575b5")) +
+      scale_fill_manual(name = element_blank(), values = c("#666666")) +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
