@@ -1,15 +1,11 @@
 
-make_inputs_row <- function(x, col=3, labels="top", suffix="slider"){
+make_inputs_row <- function(components, col=3) {
   fluidRow(
-    lapply(seq_along(x), function(i, x){
-      x <- x[[i]]
-      if(labels == "none") x$label <- ""
-      numbox <- do.call(numericInput, c(x, width = "100%"))
-      if(labels == "top") x$label <- ""
-      x$inputId <- paste0(x$inputId, suffix)
-      slider <- do.call(sliderInput, c(x, width = "100%"))
-      column(col, div(numbox, style = 'height:50px;'), slider)
-    }, x = x)
+    lapply(seq_along(components), function(i, components) {
+      component <- components[[i]]
+      slider <- do.call(sliderInput, c(component, width = "100%"))
+      column(col, div(style = 'height:25px;'), slider)
+    }, components = components)
   )
 }
 
@@ -37,11 +33,11 @@ function(request) {
     fluidRow(
       column(6,
         h4("Percent Change in Student FTEs per Year"),
-        make_inputs_row(slider.args1, 6, labels = "none"),
+        make_inputs_row(fte_slider, 6),
         h4("Tuition and Fees per Student FTE ($)"),
-        make_inputs_row(slider.args2),
+        make_inputs_row(tuition_sliders),
         h4("Total State Appropriation (Million $)"),
-        make_inputs_row(slider.args3)
+        make_inputs_row(appropriation_sliders)
       ),
       column(6,
         DT::dataTableOutput("spreadsheet")
