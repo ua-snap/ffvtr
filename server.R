@@ -5,73 +5,90 @@ library(DT)
 library(reshape2)
 
 currentYear <- 2017
-currentStudentFte <- 19229
 fteYears <- c(2017:2025)
 
-exponentialGrowth <- function(years, baseFte, percentage) {
+exponentialGrowth <- function(years, initial, percentage) {
   decimalGrowth <- 1 + percentage / 100
-  yearOffsets <- years - currentYear
-  round(baseFte * decimalGrowth ^ yearOffsets)
+  round(initial * decimalGrowth ^ years)
 }
 
 shinyServer(function(input, output, session) {
 
   onRestore(function(state) {
-    x <- c(slider.args1, slider.args2, slider.args3)
+    x <- c(fte_slider, tuition_sliders, appropriation_sliders)
     lapply(seq_along(x), function(i, x){
       updateSliderInput(session, x[[i]]$inputId, value = state$values$x[[i]]$inputId)
     }, x = x)
   })
 
-  lapply(1:9, function(i, x, suffix="slider"){
-    x <- x[[i]]
-    num.lab <- x$inputId
-    slider.lab <- paste0(x$inputId, suffix)
-    observeEvent(input[[num.lab]], {
-      if(input[[num.lab]] != input[[slider.lab]])
-        onevent("mouseleave", num.lab, updateSliderInput(session, slider.lab, value = input[[num.lab]]))
-    })
-    observeEvent(input[[slider.lab]], {
-      if(input[[num.lab]] != input[[slider.lab]])
-        updateNumericInput(session, num.lab, value = input[[slider.lab]])
-    })
-  }, x = c(slider.args1, slider.args2, slider.args3))
-    
-  studentFteGrowth <- reactive({ exponentialGrowth(fteYears, currentStudentFte, input$studentFtePercentChange) })
+  fte2017 <- 19229
+  fte2018 <- 18652
+  fte2019 <- reactive({ exponentialGrowth(1, fte2018, input$studentFtePercentChange) })
+  fte2020 <- reactive({ exponentialGrowth(1, fte2019(), input$studentFtePercentChange) })
+  fte2025 <- reactive({ exponentialGrowth(5, fte2020(), input$studentFtePercentChange) })
 
-  tuitionFeesFTE <- reactive(
+  studentFteGrowth <- reactive({
     round(
       c(
-        6806, # 2016
-        input$tuitionFeesFTE2018,
-        input$tuitionFeesFTE2019,
-        input$tuitionFeesFTE2020,
+        fte2017,
+        fte2018,
+        fte2019(),
+        fte2020(),
         approx(
           c(2020, 2025),
-          c(input$tuitionFeesFTE2020, input$tuitionFeesFTE2025),
+          c(fte2020(), fte2025()),
           c(2021:2024)
         )$y,
-        input$tuitionFeesFTE2025
+        fte2025()
       )
     )
-  )
+  })
 
-  totalStateAppropriation <- reactive(
+  tuition2017 <- 6806
+  tuition2018 <- 7146
+  tuition2019 <- reactive({ exponentialGrowth(1, tuition2018, input$tuitionFeesFTE2019) })
+  tuition2020 <- reactive({ exponentialGrowth(1, tuition2019(), input$tuitionFeesFTE2020) })
+  tuition2025 <- reactive({ exponentialGrowth(5, tuition2020(), input$tuitionFeesFTE2025) })
+
+  tuitionFeesFTE <- reactive({
     round(
       c(
-        350, # 2016
-        input$totalStateAppropriation2018,
-        input$totalStateAppropriation2019,
-        input$totalStateAppropriation2020,
+        tuition2017,
+        tuition2018,
+        tuition2019(),
+        tuition2020(),
         approx(
           c(2020, 2025),
-          c(input$totalStateAppropriation2020, input$totalStateAppropriation2025),
+          c(tuition2020(), tuition2025()),
           c(2021:2024)
         )$y,
-        input$totalStateAppropriation2025
+        tuition2025()
       )
     )
-  )
+  })
+
+  appropriation2017 <- 350
+  appropriation2018 <- 317
+  appropriation2019 <- reactive({ exponentialGrowth(1, appropriation2018, input$totalStateAppropriation2019) })
+  appropriation2020 <- reactive({ exponentialGrowth(1, appropriation2019(), input$totalStateAppropriation2020) })
+  appropriation2025 <- reactive({ exponentialGrowth(5, appropriation2020(), input$totalStateAppropriation2025) })
+
+  totalStateAppropriation <- reactive({
+    round(
+      c(
+        appropriation2017,
+        appropriation2018,
+        appropriation2019(),
+        appropriation2020(),
+        approx(
+          c(2020, 2025),
+          c(appropriation2020(), appropriation2025()),
+          c(2021:2024)
+        )$y,
+        appropriation2025()
+      )
+    )
+  })
 
   stateAppropriationPerFte <- reactive({round(totalStateAppropriation() * 1000000 / studentFteGrowth()) })
   totalTuitionFees <- reactive({round(studentFteGrowth() * tuitionFeesFTE() / 1000000) })
@@ -156,7 +173,7 @@ shinyServer(function(input, output, session) {
       )
   })
 
-  appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte() / 1000) })
+  appropriationsPlotDf <- reactive({ data.frame(years = fteYears, appropriation = stateAppropriationPerFte()) })
   appropriationsPlotDat <- reactive({ melt(appropriationsPlotDf(), id = "years") })
 
   output$appropriationsPlot <- renderPlot({
