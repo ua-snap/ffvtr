@@ -1,5 +1,5 @@
 
-make_inputs_row <- function(components, col=3) {
+make_inputs_row <- function(components, col=4) {
   fluidRow(
     lapply(seq_along(components), function(i, components) {
       component <- components[[i]]
