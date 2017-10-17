@@ -34,9 +34,9 @@ function(request) {
       column(6,
         h4("Percent Change in Student FTEs per Year"),
         make_inputs_row(fte_slider, 6),
-        h4("Tuition and Fees per Student FTE ($)"),
+        h4("Tuition and Fees per Student FTE"),
         make_inputs_row(tuition_sliders),
-        h4("Total State Appropriation (Million $)"),
+        h4("Total State Appropriation"),
         make_inputs_row(appropriation_sliders)
       ),
       column(6,
