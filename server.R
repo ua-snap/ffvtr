@@ -7,9 +7,9 @@ library(reshape2)
 currentYear <- 2017
 fteYears <- c(2017:2025)
 
-exponentialGrowth <- function(years, initial, percentage) {
+exponentialGrowth <- function(interval, initial, percentage) {
   decimalGrowth <- 1 + percentage / 100
-  round(initial * decimalGrowth ^ years)
+  round(initial * decimalGrowth ^ interval)
 }
 
 shinyServer(function(input, output, session) {
@@ -23,24 +23,15 @@ shinyServer(function(input, output, session) {
 
   fte2017 <- 19229
   fte2018 <- 18652
-  fte2019 <- reactive({ exponentialGrowth(1, fte2018, input$studentFtePercentChange) })
-  fte2020 <- reactive({ exponentialGrowth(1, fte2019(), input$studentFtePercentChange) })
-  fte2025 <- reactive({ exponentialGrowth(5, fte2020(), input$studentFtePercentChange) })
+
+  # For years 2019 - 2025
+  fteThrough2025 <- reactive({ exponentialGrowth(1:7, fte2018, input$studentFtePercentChange) })
 
   studentFteGrowth <- reactive({
-    round(
-      c(
-        fte2017,
-        fte2018,
-        fte2019(),
-        fte2020(),
-        approx(
-          c(2020, 2025),
-          c(fte2020(), fte2025()),
-          c(2021:2024)
-        )$y,
-        fte2025()
-      )
+    c(
+      fte2017,
+      fte2018,
+      fteThrough2025()
     )
   })
 
@@ -48,22 +39,17 @@ shinyServer(function(input, output, session) {
   tuition2018 <- 7146
   tuition2019 <- reactive({ exponentialGrowth(1, tuition2018, input$tuitionFeesFTE2019) })
   tuition2020 <- reactive({ exponentialGrowth(1, tuition2019(), input$tuitionFeesFTE2020) })
-  tuition2025 <- reactive({ exponentialGrowth(5, tuition2020(), input$tuitionFeesFTE2025) })
+
+  # For years 2021 - 2025
+  tuitionThrough2025 <- reactive({ exponentialGrowth(1:5, tuition2020(), input$tuitionFeesFTE2025) })
 
   tuitionFeesFTE <- reactive({
-    round(
-      c(
-        tuition2017,
-        tuition2018,
-        tuition2019(),
-        tuition2020(),
-        approx(
-          c(2020, 2025),
-          c(tuition2020(), tuition2025()),
-          c(2021:2024)
-        )$y,
-        tuition2025()
-      )
+    c(
+      tuition2017,
+      tuition2018,
+      tuition2019(),
+      tuition2020(),
+      tuitionThrough2025()
     )
   })
 
@@ -71,22 +57,17 @@ shinyServer(function(input, output, session) {
   appropriation2018 <- 317
   appropriation2019 <- reactive({ exponentialGrowth(1, appropriation2018, input$totalStateAppropriation2019) })
   appropriation2020 <- reactive({ exponentialGrowth(1, appropriation2019(), input$totalStateAppropriation2020) })
-  appropriation2025 <- reactive({ exponentialGrowth(5, appropriation2020(), input$totalStateAppropriation2025) })
+
+  # For years 2021 - 2025
+  appropriationThrough2025 <- reactive({ exponentialGrowth(1:5, appropriation2020(), input$totalStateAppropriation2025) })
 
   totalStateAppropriation <- reactive({
-    round(
-      c(
-        appropriation2017,
-        appropriation2018,
-        appropriation2019(),
-        appropriation2020(),
-        approx(
-          c(2020, 2025),
-          c(appropriation2020(), appropriation2025()),
-          c(2021:2024)
-        )$y,
-        appropriation2025()
-      )
+    c(
+      appropriation2017,
+      appropriation2018,
+      appropriation2019(),
+      appropriation2020(),
+      appropriationThrough2025()
     )
   })
 
