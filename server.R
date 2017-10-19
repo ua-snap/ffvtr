@@ -118,13 +118,11 @@ shinyServer(function(input, output, session) {
   enrollmentGraphDat <- reactive({ melt(enrollmentGraphDf(), id = "years") })
 
   output$enrollmentPlot <- renderPlot({
-    ggplot(enrollmentGraphDat(), aes(years, value, fill = variable)) +
-      geom_line() +
-      geom_point() +
+    ggplot(enrollmentGraphDat(), aes(years, value)) +
+      geom_col() +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("Enrollment") +
       ylab("Student FTEs") +
-      scale_fill_manual(name = element_blank(), values = c("#000000")) +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
@@ -141,7 +139,7 @@ shinyServer(function(input, output, session) {
 
   output$compositePlot <- renderPlot({
     ggplot(compositeGraphDat(), aes(years, value, fill = variable)) +
-      geom_col()+
+      geom_col() +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("Tuition & Fees, State Appropriations") +
       ylab("Million $") +
@@ -162,12 +160,11 @@ shinyServer(function(input, output, session) {
   appropriationsPlotDat <- reactive({ melt(appropriationsPlotDf(), id = "years") })
 
   output$appropriationsPlot <- renderPlot({
-    ggplot(appropriationsPlotDat(), aes(years, value, fill = variable)) +
+    ggplot(appropriationsPlotDat(), aes(years, value)) +
       geom_col() +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
       ggtitle("State Appropriations per FTE") +
       ylab("Thousand $") +
-      scale_fill_manual(name = element_blank(), values = c("#13ad1b")) +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
