@@ -3,6 +3,7 @@ library(ggplot2)
 library(dplyr)
 library(DT)
 library(reshape2)
+library(scales)
 
 currentYear <- 2017
 fteYears <- c(2017:2025)
@@ -53,7 +54,7 @@ shinyServer(function(input, output, session) {
     )
   })
 
-  appropriation2017 <- 350
+  appropriation2017 <- 325
   appropriation2018 <- 317
   appropriation2019 <- reactive({ exponentialGrowth(1, appropriation2018, input$totalStateAppropriation2019) })
   appropriation2020 <- reactive({ exponentialGrowth(1, appropriation2019(), input$totalStateAppropriation2020) })
@@ -80,9 +81,9 @@ shinyServer(function(input, output, session) {
     year = fteYears,
     studentFte = studentFteGrowth(),
     tuitionFees = tuitionFeesFTE(),
-    stateAppropriation = totalStateAppropriation(),
-    stateAppropriationPerFte = stateAppropriationPerFte(),
     totalTuitionFees = totalTuitionFees(),
+    stateAppropriationPerFte = stateAppropriationPerFte(),
+    stateAppropriation = totalStateAppropriation(),
     revenue = revenue()
   )})
 
@@ -93,22 +94,23 @@ shinyServer(function(input, output, session) {
       ordering = FALSE,
       columnDefs = list(
         list(
-          targets = list(1, 4),
+          targets = list(1, 2, 4),
           render = JS(
             "function(data, type, row, meta) { return data.toString().replace(/\\B(?=(\\d{3})+(?!\\d))/g, ','); }"
           )
         )
       )
     ),
+    escape = FALSE,
     rownames = FALSE,
     colnames = c(
       "Year",
       "Student FTE",
       "Tuition & Fees per Student FTE ($)",
-      "Total State Appropriation (Million $)",
-      "State Appropriation per FTE ($)",
-      "Total Tuition & Fees (Million $)",
-      "Revenue, Educational Cost (Million $)"
+      "Total Tuition & Fees (Million&nbsp;$)",
+      "State Approp. per FTE ($)",
+      "Total State Approp. (Million&nbsp;$)",
+      "Revenue, Edu. Cost (Million&nbsp;$)"
     )
   )
 
@@ -119,8 +121,8 @@ shinyServer(function(input, output, session) {
     ggplot(enrollmentGraphDat(), aes(years, value)) +
       geom_col() +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
+      scale_y_continuous(name="Student FTEs", labels = comma) +
       ggtitle("Enrollment") +
-      ylab("Student FTEs") +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
@@ -161,8 +163,8 @@ shinyServer(function(input, output, session) {
     ggplot(appropriationsPlotDat(), aes(years, value)) +
       geom_col() +
       scale_x_continuous(breaks = seq(min(fteYears), max(fteYears), by = 1)) +
+      scale_y_continuous(name = "Thousand $", labels = comma) +
       ggtitle("State Appropriations per FTE") +
-      ylab("Thousand $") +
       theme(
         text = element_text(size = 17),
         axis.text = element_text(size = 15),
