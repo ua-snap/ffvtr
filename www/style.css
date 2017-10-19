@@ -21,9 +21,13 @@
   display: inline-block;
 }
 
+#spreadsheet {
+  padding-left: 1em;
+}
+
 #spreadsheet table {
-  height: 550px;
-  margin-bottom: 3em;
+  height: 500px;
+  margin-bottom: 4em;
 }
 
 #spreadsheet .dataTable tbody td {
