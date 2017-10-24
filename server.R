@@ -36,8 +36,8 @@ shinyServer(function(input, output, session) {
     )
   })
 
-  tuition2017 <- 6806
-  tuition2018 <- 7146
+  tuition2017 <- 7020
+  tuition2018 <- 7238
   tuition2019 <- reactive({ exponentialGrowth(1, tuition2018, input$tuitionFeesFTE2019) })
   tuition2020 <- reactive({ exponentialGrowth(1, tuition2019(), input$tuitionFeesFTE2020) })
 
@@ -106,11 +106,11 @@ shinyServer(function(input, output, session) {
     colnames = c(
       "Year",
       "Student FTE",
-      "Tuition & Fees per Student FTE ($)",
+      "Tuition and Fees Price ($)",
       "Total Tuition & Fees (Million&nbsp;$)",
-      "State Approp. per FTE ($)",
+      "State Approp. per FTE&nbsp;($)",
       "Total State Approp. (Million&nbsp;$)",
-      "Revenue, Edu. Cost (Million&nbsp;$)"
+      "Revenue (Million&nbsp;$)"
     )
   )
 
@@ -177,7 +177,7 @@ shinyServer(function(input, output, session) {
   })
   
   observeEvent(input$reset, { 
-    x <- c(slider.args1, slider.args2, slider.args3)
+    x <- c(fte_slider, tuition_sliders, appropriation_sliders)
     lapply(seq_along(x), function(i, x){
       updateSliderInput(session, x[[i]]$inputId, value = x[[i]]$value)
     }, x = x)
