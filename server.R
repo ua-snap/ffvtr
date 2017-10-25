@@ -22,6 +22,10 @@ shinyServer(function(input, output, session) {
     }, x = x)
   })
 
+  # Prevent reset button state from being stored in bookmark URL.
+  # Otherwise the app will reset as soon as it loads from a bookmark URL.
+  setBookmarkExclude(c("reset"))
+
   fte2017 <- 19229
   fte2018 <- 18652
 
