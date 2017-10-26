@@ -32,7 +32,7 @@ function(request) {
     useShinyjs(),
     fluidRow(
       column(6,
-        h4("Percent Change in Student FTEs per Year"),
+        h4("Student FTEs"),
         make_inputs_row(fte_slider, 6),
         h4("Tuition and Fees Price"),
         make_inputs_row(tuition_sliders),
